@@ -1,0 +1,126 @@
+Getting Started
+Version Control System (VCS)
+* Local Version Control Systems, RCS
+* Centralized Version Control Systems (CVCS), CVS, Subversion, and Perforce
+* Distributed Version Control Systems (DVCS), Git, Mercurial, Bazaar or Darcs
+Git
+* snapshots, not differences. (CVS, Subversion, Perforce, Bazaar... are delta-based version control)
+* nearly every operation is local
+* git has integrity, check-summed
+* git generally only adds data
+* three states:
+** committed
+** modified
+** staged, a technical name in Git parlance is the "index"
+First-time git setup
+configuration:
+* /etc/gitconfig file, git config --system
+* ~/.gitconfig or ~/.config/git/config file, git config --global
+* .git/config file in the Git directory
+Identity
+* git config --global user.name "Jamie Zhang"
+* git config --global user.email Jamie.Zhang.0417@gmail.com
+Editor
+* git config --global core.editor emacs
+Check
+* git config --list
+* git config <key>
+* git config --show-origin <key>
+Help
+* git help <verb>
+* git <verb> -h, git <verb> --help
+
+
+
+
+
+Git Basics
+* short status: git status -s, git status --short
+* ignoring files: .gitignore, https://github.com/github/gitignore
+** Blank lines or lines starting with # are ignored
+** Standard glob patterns work, and will be applied recursively throughout the entire working tree.
+*** * -> zero or more characters, *.a
+*** [abc] -> any character inside the brackets
+*** ? -> a single character
+*** [0-9] -> any character between them
+*** ** -> nested directories, folder/**/*
+** You can start patterns with a forward slash(/) to avoid recursivity
+** You can end patterns with a forward slash(/) to specify a directory
+** You can negate a pattern by starting it with an exclamation point(!), !lib.a
+* git diff, working directory vs staging area
+* git diff --staged, git diff --cached, staged changes vs last commit
+* git difftool, git difftool --tool-help
+* git commit -v, put diff of changes in the editor
+* git commit -a, skip staging area (git add)
+* git rm, git rm -f, git rm --cached
+* git mv file_from file_to
+* git log -p, shows the differences
+* git log -<num>, last <num> commits
+* git log --stat, abbreviated stats for each commit
+* git log --pretty=oneline, --pretty=full, --pretty=fuller
+* git log --pretty=format:"%h - %an, %ar : %s"
+* git log --graph
+* git commit --amend, redo the commit, make the additional changes, stage and commit again
+** git commit -m "initial commit"; git add forgotten_file; git commit --amend
+* git remote, git remote -v, git remote show <remote>
+* git remote remove, git remote rm
+* tag
+** list tag: git tag, git tag -l <pattern>
+** create tag:
+*** lightweight tag: just a pointer to a specific commit
+**** git tag <tag-name>
+*** annotated agg: stored as full objects in the Git database, checksummed.
+**** git tag -a <tag-name> -m <message>
+**** git tag -a <tag-name> <commit>
+*** git show <tag-name>
+*** git push doesn't transfer tags to remote servers. git push origin <tag-name>, git push origin --tags
+* git alias
+** git config --global alias.co checkout
+** git config --global alias.br branch
+** git config --global alias.unstage 'reset HEAD --'
+
+
+
+
+
+Git Branching
+* git log --oneline --decorate --graph --all
+** --decorate, show where branch pointers are pointing
+** --all, pretend as if all the refs in refs/, along with HEAD, are listed on the command line as <commit>.
+* git branch -d <branch-name>; git branch -D <branch-name>, by force
+* git mergetool, git mergetool --tool-help
+* git branch -v, to ses last commit on each branch
+* git branch --merged, git branch --no-merged, list branches that haven't been merged into current one.
+* git branch --no-merged master, similar to above but target master branch
+* git ls-remote, git remote show
+* git fetch <remote>, git fetch --all
+* git remote add
+* git push <remote> <branch>, git push <remote> <branch>:<branch>
+* git push <remote> <local-branch>:<remote-branch>, push <local-branch> to <remote-branch> on <remote>
+* git checkout -b <local-branch> <remote>/<branch>, also create track branch automatically
+* git branch -u <remote>/<remote-branch>, git branch --set-upstream-to=<remote>/<remote-branch>
+* git branch -vv, check tracking branch
+* upstream shorthand, git merge @{u}, git merge origin/master
+* git push origin --delete <remote-branch-name>
+* git pull = git fetch + git merge
+* rebase, (there are two main ways to integrate changes from one branch into another: merge and rebase)
+** one use case
+--
+git checkout experiment
+git rebase master
+git checkout master
+git merge experiment -> a fast-forward merge
+--
+** another use case
+--
+git rebase --onto master server client, take changes on client but not on server and rebase them into master
+git check master
+git merge client
+git rebase master server
+git checkout master
+git merge server
+--
+* git rebase <base-branch> <topic-branch>, rebase topic branch on base branch
+* do not rebase commits that exist outside your repository
+* git pull --rebase
+** git config --global pull.rebase
